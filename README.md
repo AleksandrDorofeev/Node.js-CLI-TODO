@@ -25,12 +25,12 @@ $ node todo.js
 [ ] 3. Time to finish picture
 ```
 # Deleting a Task
-If you're wanna delete task, use `delete ID`
+If you're wanna delete a task not completing it, use `delete ID`
 ```
 $ node todo.js delete 1
 ```
 # Archiving a Task
-If you want to delete a task, it enters the archive, use `delete ID`
+If you want to delete a complete task, it enters the archive, use `delete ID`
 # Archive your Tasks
 Use `archive` to see the archive of your completed tasks
 # An example todo stored in .todos.json
