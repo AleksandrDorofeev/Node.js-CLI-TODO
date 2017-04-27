@@ -7,3 +7,11 @@ $ node todo.js add "Buy more juice"
 $ node todo.js add "Go for a walk with the ferret"
 $ node todo.js add "Time to finish picture"
 ```
+# List your tasks
+Listing your tasks, use `todo.js`
+```
+$ node todo.js
+[] 1. Buy more juice
+[] 2. Go for a walk with the ferret
+[] 2. Time to finish picture
+```
