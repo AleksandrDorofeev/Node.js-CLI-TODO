@@ -15,3 +15,9 @@ $ node todo.js
 [] 2. Go for a walk with the ferret
 [] 2. Time to finish picture
 ```
+# Finish a Task
+After you're done with something, use `done ID`
+```
+$ node todo.js done 1
+[X] 1. Buy more juice
+```
