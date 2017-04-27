@@ -1,4 +1,4 @@
-# Node.js-CLI-TODO
+# NodeJS Command Line TODO
 command-line todo list manager
 # Add a Task
 To add task, use `add "Task description"`
