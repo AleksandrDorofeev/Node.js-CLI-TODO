@@ -1,38 +1,42 @@
-let fs = require('fs');
-let todo = require('./todo.json');
+let R = require("ramda")
+let dbFile = "./todo.json"
+let FS = require("fs")
 
+//parse init
 
-let td = process.argv.slice(3);  //task description
-let operation = process.argv.slice(2, 3);  //operation with task
+let operation = process.argv[2]  //operation with task
+let task = process.argv[3]  //task description
 
-function writeTasks(){
-     try{
-         fs.writeFileSync("./todo.json",'{ "tasks":' + JSON.stringify(td) + '}')
-     } catch (err) {
-         throw err;
-         process.exit();
-     }
- }
-writeTasks(td)
+//commands
 
-/*let add = fs.writeFile("./todo.json",'{ "task":' + JSON.stringify(td) + '}', "utf-8", (err) => {
-  if (err) throw err;
-  console.log("file has been created")
-})
+let commands = {}
 
+commands.init = function () {
+  FS.writeFileSync(dbFile, "[]")
+}
 
-let read = fs.readFile('./todo.json', 'utf8', function readFileCallback(err, data){
-    if (err){
-        console.log(err);
-    } else {
-    readTasks = JSON.parse(data);
-    console.log(readTasks);
-    }
-  });*/
+commands.add = function (todo) {
+  let todos = require(dbFile)
+  FS.writeFileSync(dbFile, JSON.stringify(R.append(todo, todos), null, 2))
+}
 
+commands.delete = function (index) {
+  let todos = require(dbFile)
+  FS.writeFileSync(dbFile, R.remove(index, 1, todos));
+}
 
-/*  function addTask(text,duedate){
-      var task = {name:text,date:duedate||""};
-      td.push(task);
-      writeTasks();
-  }*/
+//command manager
+
+switch (operation) {
+  case "init":
+    return commands.init()
+  case "add":
+    return commands.add({
+      task,
+      done: false,
+      archived: false,
+    })
+    break;
+  default:
+
+}
