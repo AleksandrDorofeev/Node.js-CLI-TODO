@@ -25,6 +25,13 @@ commands.delete = function (index) {
   FS.writeFileSync(dbFile, R.remove(index, 1, todos));
 }
 
+commands.delete = function (index) {
+  let todos = require(dbFile)
+  let todos2 = R.remove(index, 1, todos)
+  let str = JSON.stringify(todos2, null, 2)
+  FS.writeFileSync(dbFile, str);
+  console.log(str)
+}
 //command manager
 
 switch (operation) {
