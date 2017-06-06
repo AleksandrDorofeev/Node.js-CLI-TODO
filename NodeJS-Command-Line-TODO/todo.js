@@ -35,11 +35,11 @@ commands.delete = function (index) {
 commands.done = function (index) {
   let todos = require(dbFile)
   let todos3 = R.update(index, R.assoc("done", true, todos[index]), todos)
-  let str2 = JSON.stringyfy(todos3, null, 2)
+  let str2 = JSON.stringify(todos3, null, 2)
   FS.writeFileSync(dbFile, str2);
   console.log(str2)
 }
-FS.writeFileSync(dbFile, R.update(index, R.assoc("done", true, todos[index]), todos))
+
 //command manager
 
 switch (operation) {
