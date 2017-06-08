@@ -15,10 +15,10 @@ commands.init = function () {
   FS.writeFileSync(dbFile, "[]")
 }
 
-/*let writeFileX = R.curry((dbFile, todo) => {
-  let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
-  FS.outputFileSync(dbFile, str, "utf-8")
-  return todo
+/*let writeFileX = R.curry((file, content) => {
+  let str = typeof content == "string" ? content : JSON.stringify(content, null, 2)
+  FS.outputFileSync(file, str, "utf-8")
+  return content
 })*/
 
 commands.add = function (todo) {
