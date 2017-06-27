@@ -2,7 +2,6 @@ let R = require("ramda")
 let dbFile = "./todo.json"
 let FS = require("fs-extra")
 
-
 //parse init
 
 let operation = process.argv[2]  //operation with task
@@ -25,12 +24,10 @@ commands.init = function () {
   console.log(todosStr)
 }
 
-commands.add = function (text) {
+let forEachI = R.addIndex(R.forEach)
+
+commands.list = function () {
   let todos = require(dbFile)
-  let todos2 = R.append({text, done: false, archived: false}, todos)
-  let todos2Str = JSON.stringify(todos2, null, 2)
-  FS.writeFileSync(dbFile, todos2Str)
-  console.log(text)
   let recentTodos = R.filter(x => !x.archived, todos)
   forEachI(
     (todo, index) => console.log(index + 1, todo.done ? '[x]' : '[ ]', todo.text),
@@ -38,10 +35,12 @@ commands.add = function (text) {
   )
 }
 
-let forEachI = R.addIndex(R.forEach)
-
-commands.list = function () {
+commands.add = function (text) {
   let todos = require(dbFile)
+  let todos2 = R.append({text, done: false, archived: false}, todos)
+  let todos2Str = JSON.stringify(todos2, null, 2)
+  FS.writeFileSync(dbFile, todos2Str)
+  console.log(text)
   let recentTodos = R.filter(x => !x.archived, todos)
   forEachI(
     (todo, index) => console.log(index + 1, todo.done ? '[x]' : '[ ]', todo.text),
@@ -90,19 +89,15 @@ commands.archive = function () {
 switch (operation) {
   case "init":
     return commands.init()
-  case "add":
-    //let text = process.argv[3]
-    return commands.add(task)
-  case "list":
+    case "list":
     return commands.list()
+  case "add":
+    return commands.add(task)
   case "delete":
-    //let index = Number(process.argv[3])
     return commands.delete(task)
   case "done":
-    //let index = Number(process.argv[3])
     return commands.done(task)
   case "archive":
-    //let index = Number(process.argv[3])
     return commands.archive()
   default:
     throw Exception(`unsupported operation ${operation}`)
