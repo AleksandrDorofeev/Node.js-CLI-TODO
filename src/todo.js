@@ -5,8 +5,6 @@ let FS = require("fs-extra")
 //parse init
 
 let operation = process.argv[2]  //operation with task
-let task = process.argv[3]  //task description
-let index = process.argv[3] //index description
 
 //commands
 
@@ -94,16 +92,19 @@ commands.archive = function () {
 switch (operation) {
   case "init":
     return commands.init()
-    case "list":
-    return commands.list()
   case "add":
-    return commands.add(task)
+    let text = process.argv[3]
+    return commands.add(text)
+  case "list":
+    return commands.list()
   case "delete":
-    return commands.delete(index)
+    let deleteIndex = Number(process.argv[3])
+    return commands.delete(deleteIndex)
   case "done":
-    return commands.done(index)
+    let doneIndex = Number(process.argv[3])
+    return commands.done(doneIndex)
   case "archive":
     return commands.archive()
   default:
-    throw Exception(`unsupported operation ${operation}`)
+    throw Error(`unsupported operation ${operation}`)
 }
