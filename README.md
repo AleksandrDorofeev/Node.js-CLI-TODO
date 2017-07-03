@@ -65,19 +65,26 @@ $ node todo.js archive
 ### todos.json
 
 ```json
-[{
-  "id": 2,
-  "task": "Go for a walk with the ferret",
-  "done": false,
-  "archived": false
-}]
+[
+   {
+    "text": "Go for a walk with the ferret",
+    "status": "active"
+   },
+   {
+    "text": "Time to finish picture",
+    "status": "done"
+   },
+   {
+    "text": "Buy more juice",
+    "status": "archived"
+   }
+]
   ```
   
 ### Item states
 
 ```js
-{done: false, archived: false} // "pending"
-{done: false, archived: true}  // "ignored" (rare case)
-{done: true, archived: false}  // "done"
-{done: true, archived: true}   // "archived"
+{status: "active"}
+{status: "done"}  
+{status: "archived"}
 ```
