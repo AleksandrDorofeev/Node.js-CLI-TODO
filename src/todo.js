@@ -2,32 +2,31 @@ let R = require("ramda")
 let dbFile = "./todo.json"
 let FS = require("fs-extra")
 
-
-//parse init
-
-let operation = process.argv[2]  //operation with task
-
 //commands
 
 let commands = {}
-
-let load = () => require(dbFile)
-
-let save = (todos) => {writeFileX(dbFile, todos); logAll(todos) }
 
 let writeFileX = R.curry((dbFile, todo2) => {
   let str = typeof todo2 == "string" ? todo2 : JSON.stringify(todo2, null, 2)
   FS.outputFileSync(dbFile, str, "utf-8")
 })
 
+let ranking = (todo) => {
+return Number(todo.status == "archived") // archive == 1, * == 0
+}
+
+let load = () => require(dbFile)
+let save = (todos) => {writeFileX(dbFile, todos); logAll(todos) }
+
+let forEachI = R.addIndex(R.forEach)
+
 let logLine = (todo, i) => {
   console.log(
-    todo.status == "active" ? `[ ] ${i + 1} ${todo.text}` :
-    todo.status == "done"   ? `[x] ${i + 1} ${todo.text}` :
+    todo.status == "active" ? `[ ] ${i + 1}. ${todo.text}` :
+    todo.status == "done"   ? `[x] ${i + 1}. ${todo.text}` :
                               `` // ignore archived todos
   )
 }
-let forEachI = R.addIndex(R.forEach)
 let logAll = forEachI(logLine)
 
 commands.init = function () {
@@ -68,18 +67,13 @@ commands.done = function (index) {
 commands.archive = function () {
   let todos = load()
   let doneTodos = R.map(todo => todo.status == "done" ? R.assoc("status", "archived", todo) : todo, todos)
-  let ranking = (todo) => {
-  return Number(todo.status == "archived") // archive == 1, * == 0
-  }
   let sortTodos = R.sortBy(ranking, doneTodos)
-  writeFileX(dbFile, sortTodos)
-  forEachI(
-    (todo, index) => console.log(todo.status != "active" ? "Archived" : "Error: still active", index + 1 + ".", todo.text),
-    sortTodos
-  )
+  save(sortTodos)
 }
 
 //command manager
+
+let operation = process.argv[2]
 
 switch (operation) {
   case "init":
