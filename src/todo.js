@@ -54,14 +54,12 @@ commands.list = function () {
 
 
 commands.delete = function (index) {
-  index = Number(index) - 1
   let todos = load()
   let deleteTodos = R.remove(index, 1, todos)
   save(deleteTodos)
 }
 
 commands.done = function (index) {
-  index = Number(index) - 1
   let todos = load()
   let doneTodos = R.update(index, R.assoc("status", "done", todos[index]), todos)
   save(doneTodos)
@@ -92,10 +90,10 @@ switch (operation) {
   case "list":
     return commands.list()
   case "delete":
-    let deleteIndex = Number(process.argv[3])
+    let deleteIndex = Number(process.argv[3]) - 1
     return commands.delete(deleteIndex)
   case "done":
-    let doneIndex = Number(process.argv[3])
+    let doneIndex = Number(process.argv[3]) - 1
     return commands.done(doneIndex)
   case "archive":
     return commands.archive()
