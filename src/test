@@ -1,5 +1,5 @@
 let R = require("ramda")
-let dbFile = "./todo.json"
+let resentDBFile = "./todo.json"
 let archiveDBFile = "./archive.json"
 let FS = require("fs-extra")
 
@@ -7,9 +7,9 @@ let FS = require("fs-extra")
 
 let commands = {}
 
-let writeFileX = R.curry((dbFile, todo) => {
+let writeFileResent = R.curry((resentDBFile, todo) => {
   let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
-  FS.outputFileSync(dbFile, str, "utf-8")
+  FS.outputFileSync(resentDBFile, str, "utf-8")
 })
 
 let writeFileArchive = R.curry((archiveDBFile, todo) => {
@@ -25,10 +25,10 @@ let ranking = (todo) => {
 return Number(todo.status != "active") // archive == 1, * == 0
 }
 
-let load = () => require(dbFile)
-let save = (todos) => {writeFileX(dbFile, todos); logAll(todos) }
+let loadResent = () => require(resentDBFile)
+let saveResent = (todos) => {writeFileX(resentDBFile, todos); logAll(todos) }
 let loadArchive = () => require(archiveDBFile)
-let archiveSave = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
+let saveArchive = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
 
 let forEachI = R.addIndex(R.forEach)
 
@@ -50,26 +50,26 @@ let logArchive = forEachI(logLineArchive)
 
 commands.init = function () {
   let todos = []
-  writeFileX(dbFile, todos)
+  writeFileX(resentDBFile, todos)
   let archive = []
   writeFileX(archiveDBFile, todos)
   console.log("Ready to work!")
 }
 
 commands.list = function () {
-  let todos = load()
-  logAll(todos)
+  let resentTodos = load()
+  logAll(resentTodos)
   }
 
 commands.add = function (text) {
-  let todos = load()
-  let addTodos = R.append({text, "done": false}, todos)
+  let resentTodos = load()
+  let addTodos = R.append({text, "done": false}, resentTodos)
   save(addTodos)
 }
 
 commands.delete = function (index) {
-  let todos = load()
-  let deleteTodos = R.remove(index, 1, todos)
+  let resentTodos = load()
+  let deleteTodos = R.remove(index, 1, resentTodos)
   save(deleteTodos)
 }
 
@@ -78,25 +78,6 @@ commands.done = function (index) {
   let doneTodos = R.update(index, R.assoc("done", true, todos[index]), todos)
   save(doneTodos)
 }
-
-/*commands.archive = function () {
-  let activeTodos = load()
-  let archiveTodos = loadArchive()
-  let doneTodos = R.map(todo => todo.status == "done" ? R.assoc("status", "archived", todo) : todo, activeTodos)
-  //для актива
-  let sortActiveTodos = R.sortBy(ranking, doneTodos)
-  let takeActive = R.takeWhile(todo => todo.status == "active", sortActiveTodos)
-  //для архива
-  let sortArchiveTodos = R.sortBy(rankingArchive, doneTodos)
-  let takeArchive = R.unnest(R.append(R.takeWhile(todo => todo.status == "archived", sortArchiveTodos), archiveTodos))
-  /*writeFileX(dbFile, sortTodos)
-  forEachI(
-    (todo, index) => console.log(todo.status != "active" ? "[#]" : "[]", index + 1 + ".", todo.text),
-    sortTodos
-  )
-  save(takeActive)
-  archiveSave(takeArchive)
-}*/
 
 commands.archive = function () {
   let activeTodos = load() // загружаем текущие
