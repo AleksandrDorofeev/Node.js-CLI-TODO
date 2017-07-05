@@ -9,14 +9,9 @@ let forEachI = R.addIndex(R.forEach)
 
 let commands = {}
 
-let writeFileReсent = R.curry((recentDBFile, todo) => {
+let writeFileX = R.curry((dbFile, todo) => {
   let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
-  FS.outputFileSync(recentDBFile, str, "utf-8")
-})
-
-let writeFileArchive = R.curry((archiveDBFile, todo) => {
-  let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
-  FS.outputFileSync(archiveDBFile, str, "utf-8")
+  FS.outputFileSync(dbFile, str, "utf-8")
 })
 
 let logLine = (todo, i) => {
@@ -41,8 +36,8 @@ let loadArchive = () => require(archiveDBFile)
 let saveArchive = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
 
 commands.init = function () {
-  writeFileRecent(recentDBFile, [])
-  writeFileArchive(archiveDBFile, [])
+  writeFileX(recentDBFile, [])
+  writeFileX(archiveDBFile, [])
   console.log("Ready to work!")
 }
 
