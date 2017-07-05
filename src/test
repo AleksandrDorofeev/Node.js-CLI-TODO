@@ -48,20 +48,20 @@ commands.list = function () {
 
 commands.add = function (text) {
   let recentTodos = loadRecent()
-  let addTodos = R.append({text, "done": false}, recentTodos)
-  save(addTodos)
+  let recentTodos2 = R.append({text, "done": false}, recentTodos)
+  save(recentTodos2)
 }
 
 commands.delete = function (index) {
   let recentTodos = loadRecent()
-  let deleteTodos = R.remove(index, 1, recentTodos)
-  save(deleteTodos)
+  let recentTodos2 = R.remove(index, 1, recentTodos)
+  save(recentTodos2)
 }
 
 commands.done = function (index) {
   let recentTodos = loadRecent()
-  let doneTodos = R.update(index, R.assoc("done", true, recentTodos[index]), recentTodos)
-  save(doneTodos)
+  let recentTodos2 = R.update(index, R.assoc("done", true, recentTodos[index]), recentTodos)
+  save(recentTodos2)
 }
 
 commands.archive = function () {
