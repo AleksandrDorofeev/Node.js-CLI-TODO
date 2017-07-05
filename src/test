@@ -17,14 +17,6 @@ let writeFileArchive = R.curry((archiveDBFile, todo) => {
   FS.outputFileSync(archiveDBFile, str, "utf-8")
 })
 
-let rankingArchive = (todo) => {
-return Number(todo.status != "archived") // archive == 1, * == 0
-}
-
-let ranking = (todo) => {
-return Number(todo.status != "active") // archive == 1, * == 0
-}
-
 let loadResent = () => require(resentDBFile)
 let saveResent = (todos) => {writeFileX(resentDBFile, todos); logAll(todos) }
 let loadArchive = () => require(archiveDBFile)
