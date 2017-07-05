@@ -57,7 +57,9 @@ User `archive` command. Archived tasks are possible to view only in database fil
 
 ```
 $ node todo.js archive
-= Add a task! =
+[#] 1. Buy more juice
+[ ] 2. Go for a walk with the ferret
+[ ] 3. Time to finish picture
 ```
 
 ## Database
@@ -68,23 +70,26 @@ $ node todo.js archive
 [
    {
     "text": "Go for a walk with the ferret",
-    "status": "active"
+    "done": false
    },
    {
     "text": "Time to finish picture",
-    "status": "done"
+    "done": true
    },
    {
     "text": "Buy more juice",
-    "status": "archived"
+    "done": false
    }
 ]
   ```
   
-### Item states
-
-```js
-{status: "active"}
-{status: "done"}  
-{status: "archived"}
-```
+### archive.json
+  
+```json
+[
+   {
+    "text": "Go for a walk with the ferret",
+    "done": true
+   }
+]
+   ```
