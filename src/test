@@ -1,28 +1,23 @@
 let R = require("ramda")
-let resentDBFile = "./todo.json"
+let reсentDBFile = "./todo.json"
 let archiveDBFile = "./archive.json"
 let FS = require("fs-extra")
 
 //commands
 
+let forEachI = R.addIndex(R.forEach)
+
 let commands = {}
 
-let writeFileResent = R.curry((resentDBFile, todo) => {
+let writeFileReсent = R.curry((recentDBFile, todo) => {
   let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
-  FS.outputFileSync(resentDBFile, str, "utf-8")
+  FS.outputFileSync(recentDBFile, str, "utf-8")
 })
 
 let writeFileArchive = R.curry((archiveDBFile, todo) => {
   let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
   FS.outputFileSync(archiveDBFile, str, "utf-8")
 })
-
-let loadResent = () => require(resentDBFile)
-let saveResent = (todos) => {writeFileX(resentDBFile, todos); logAll(todos) }
-let loadArchive = () => require(archiveDBFile)
-let saveArchive = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
-
-let forEachI = R.addIndex(R.forEach)
 
 let logLine = (todo, i) => {
   console.log(
@@ -31,7 +26,7 @@ let logLine = (todo, i) => {
                               `` // ignore archived todos
   )
 }
-let logAll = forEachI(logLine)
+let logRecent = forEachI(logLine)
 
 let logLineArchive = (todo, i) => {
   console.log(
@@ -40,43 +35,46 @@ let logLineArchive = (todo, i) => {
 }
 let logArchive = forEachI(logLineArchive)
 
+let loadReсent = () => require(recentDBFile)
+let saveReсent = (todos) => {writeFileX(recentDBFile, todos); logAll(todos) }
+let loadArchive = () => require(archiveDBFile)
+let saveArchive = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
+
 commands.init = function () {
-  let todos = []
-  writeFileX(resentDBFile, todos)
-  let archive = []
-  writeFileX(archiveDBFile, todos)
+  writeFileRecent(recentDBFile, [])
+  writeFileArchive(archiveDBFile, [])
   console.log("Ready to work!")
 }
 
 commands.list = function () {
-  let resentTodos = loadResent()
-  logAll(resentTodos)
-  }
+  let recentTodos = loadRecent()
+  logAll(recentTodos)
+}
 
 commands.add = function (text) {
-  let resentTodos = loadResent()
-  let addTodos = R.append({text, "done": false}, resentTodos)
+  let recentTodos = loadRecent()
+  let addTodos = R.append({text, "done": false}, recentTodos)
   save(addTodos)
 }
 
 commands.delete = function (index) {
-  let resentTodos = loadResent()
-  let deleteTodos = R.remove(index, 1, resentTodos)
+  let recentTodos = loadRecent()
+  let deleteTodos = R.remove(index, 1, recentTodos)
   save(deleteTodos)
 }
 
 commands.done = function (index) {
-  let resentTodos = loadResent()
-  let doneTodos = R.update(index, R.assoc("done", true, resentTodos[index]), resentTodos)
+  let recentTodos = loadRecent()
+  let doneTodos = R.update(index, R.assoc("done", true, recentTodos[index]), recentTodos)
   save(doneTodos)
 }
 
 commands.archive = function () {
-  let resentTodos = loadResent() // загружаем текущие
+  let recentTodos = loadRecent() // загружаем текущие
   let archiveTodos = loadArchive() // загружаем архивные
-  let resentTodos2 = R.reject(R.prop("done"), resentTodos) // выбрасываем сделанные из текущих
-  let archiveTodos2 = R.concat(R.filter(R.prop("done"), resentTodos), archiveTodos) // добавляем сделанные к архивным
-  saveResent(resentTodos2) // сохраняем новую версию текущих
+  let recentTodos2 = R.reject(R.prop("done"), recentTodos) // выбрасываем сделанные из текущих
+  let archiveTodos2 = R.concat(R.filter(R.prop("done"), recentTodos), archiveTodos) // добавляем сделанные к архивным
+  saveRecent(recentTodos2) // сохраняем новую версию текущих
   saveArchive(archiveTodos2) // сохраняем новую версию архива
 }
 
