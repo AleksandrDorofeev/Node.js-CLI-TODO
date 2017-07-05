@@ -57,35 +57,35 @@ commands.init = function () {
 }
 
 commands.list = function () {
-  let resentTodos = load()
+  let resentTodos = loadResent()
   logAll(resentTodos)
   }
 
 commands.add = function (text) {
-  let resentTodos = load()
+  let resentTodos = loadResent()
   let addTodos = R.append({text, "done": false}, resentTodos)
   save(addTodos)
 }
 
 commands.delete = function (index) {
-  let resentTodos = load()
+  let resentTodos = loadResent()
   let deleteTodos = R.remove(index, 1, resentTodos)
   save(deleteTodos)
 }
 
 commands.done = function (index) {
-  let todos = load()
-  let doneTodos = R.update(index, R.assoc("done", true, todos[index]), todos)
+  let resentTodos = loadResent()
+  let doneTodos = R.update(index, R.assoc("done", true, resentTodos[index]), resentTodos)
   save(doneTodos)
 }
 
 commands.archive = function () {
-  let activeTodos = load() // загружаем текущие
+  let resentTodos = loadResent() // загружаем текущие
   let archiveTodos = loadArchive() // загружаем архивные
-  let activeTodos2 = R.reject(R.prop("done"), activeTodos) // выбрасываем сделанные из текущих
-  let archiveTodos2 = R.concat(R.filter(R.prop("done"), activeTodos), archiveTodos) // добавляем сделанные к архивным
-  save(activeTodos2) // сохраняем новую версию текущих
-  archiveSave(archiveTodos2) // сохраняем новую версию архива
+  let resentTodos2 = R.reject(R.prop("done"), resentTodos) // выбрасываем сделанные из текущих
+  let archiveTodos2 = R.concat(R.filter(R.prop("done"), resentTodos), archiveTodos) // добавляем сделанные к архивным
+  saveResent(resentTodos2) // сохраняем новую версию текущих
+  saveArchive(archiveTodos2) // сохраняем новую версию архива
 }
 
 //command manager
