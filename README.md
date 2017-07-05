@@ -57,9 +57,9 @@ User `archive` command. Archived tasks are possible to view only in database fil
 
 ```
 $ node todo.js archive
-[#] 1. Buy more juice
-[ ] 2. Go for a walk with the ferret
-[ ] 3. Time to finish picture
+[ ] 1. Go for a walk with the ferret
+[ ] 2. Time to finish picture
+[#] 3. Buy more juice
 ```
 
 ## Database
