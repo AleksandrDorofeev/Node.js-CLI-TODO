@@ -4,7 +4,7 @@
 
 * Simple CLI API
 * Via single `todos.js` script
-* Database in `.json`. file
+* Database in `.json`. files
 * Outputs current state after every command
 
 ## Functionality
