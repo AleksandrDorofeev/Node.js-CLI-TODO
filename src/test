@@ -65,12 +65,12 @@ commands.done = function (index) {
 }
 
 commands.archive = function () {
-  let recentTodos = loadRecent() // загружаем текущие
-  let archiveTodos = loadArchive() // загружаем архивные
-  let recentTodos2 = R.reject(R.prop("done"), recentTodos) // выбрасываем сделанные из текущих
-  let archiveTodos2 = R.concat(R.filter(R.prop("done"), recentTodos), archiveTodos) // добавляем сделанные к архивным
-  saveRecent(recentTodos2) // сохраняем новую версию текущих
-  saveArchive(archiveTodos2) // сохраняем новую версию архива
+  let recentTodos = loadRecent()
+  let archiveTodos = loadArchive()
+  let recentTodos2 = R.reject(R.prop("done"), recentTodos)
+  let archiveTodos2 = R.concat(R.filter(R.prop("done"), recentTodos), archiveTodos)
+  saveRecent(recentTodos2)
+  saveArchive(archiveTodos2)
 }
 
 //command manager
