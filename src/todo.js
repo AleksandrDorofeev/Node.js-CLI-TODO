@@ -1,74 +1,76 @@
 let R = require("ramda")
-let dbFile = "./todo.json"
+let reсentDBFile = "./todo.json"
+let archiveDBFile = "./archive.json"
 let FS = require("fs-extra")
 
 //commands
 
+let forEachI = R.addIndex(R.forEach)
+
 let commands = {}
 
-let writeFileX = R.curry((dbFile, todo2) => {
-  let str = typeof todo2 == "string" ? todo2 : JSON.stringify(todo2, null, 2)
+let writeFileX = R.curry((dbFile, todo) => {
+  let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
   FS.outputFileSync(dbFile, str, "utf-8")
 })
 
-let ranking = (todo) => {
-return Number(todo.status == "archived") // archive == 1, * == 0
-}
-
-let load = () => require(dbFile)
-let save = (todos) => {writeFileX(dbFile, todos); logAll(todos) }
-
-let forEachI = R.addIndex(R.forEach)
-
 let logLine = (todo, i) => {
   console.log(
-    todo.status == "active" ? `[ ] ${i + 1}. ${todo.text}` :
-    todo.status == "done"   ? `[x] ${i + 1}. ${todo.text}` :
+    todo.done == false ? `[ ] ${i + 1}. ${todo.text}` :
+    todo.done == true  ? `[x] ${i + 1}. ${todo.text}` :
                               `` // ignore archived todos
   )
 }
-let logAll = forEachI(logLine)
+let logRecent = forEachI(logLine)
+
+let logLineArchive = (todo, i) => {
+  console.log(
+    todo.done == true ? `[#] ${i + 1}. ${todo.text}` : ``
+  )
+}
+let logArchive = forEachI(logLineArchive)
+
+let loadReсent = () => require(recentDBFile)
+let saveReсent = (todos) => {writeFileX(recentDBFile, todos); logAll(todos) }
+let loadArchive = () => require(archiveDBFile)
+let saveArchive = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
 
 commands.init = function () {
-  let todos = []
-  writeFileX(dbFile, todos2)
-  console.log(todosStr)
+  writeFileX(recentDBFile, [])
+  writeFileX(archiveDBFile, [])
+  console.log("Ready to work!")
 }
 
 commands.list = function () {
-  let todos = load()
-  logAll(todos)
-  }
+  let recentTodos = loadRecent()
+  logAll(recentTodos)
+}
 
 commands.add = function (text) {
-  let todos = load()
-  let addTodos = R.append({text, status: "active"}, todos)
-  save(addTodos)
+  let recentTodos = loadRecent()
+  let recentTodos2 = R.append({text, "done": false}, recentTodos)
+  save(recentTodos2)
 }
 
-commands.list = function () {
-  let todos = load()
-  logAll(todos)
-  }
-
-
 commands.delete = function (index) {
-  let todos = load()
-  let deleteTodos = R.remove(index, 1, todos)
-  save(deleteTodos)
+  let recentTodos = loadRecent()
+  let recentTodos2 = R.remove(index, 1, recentTodos)
+  save(recentTodos2)
 }
 
 commands.done = function (index) {
-  let todos = load()
-  let doneTodos = R.update(index, R.assoc("status", "done", todos[index]), todos)
-  save(doneTodos)
+  let recentTodos = loadRecent()
+  let recentTodos2 = R.update(index, R.assoc("done", true, recentTodos[index]), recentTodos)
+  save(recentTodos2)
 }
 
 commands.archive = function () {
-  let todos = load()
-  let doneTodos = R.map(todo => todo.status == "done" ? R.assoc("status", "archived", todo) : todo, todos)
-  let sortTodos = R.sortBy(ranking, doneTodos)
-  save(sortTodos)
+  let recentTodos = loadRecent()
+  let archiveTodos = loadArchive()
+  let recentTodos2 = R.reject(R.prop("done"), recentTodos)
+  let archiveTodos2 = R.concat(R.filter(R.prop("done"), recentTodos), archiveTodos)
+  saveRecent(recentTodos2)
+  saveArchive(archiveTodos2)
 }
 
 //command manager
