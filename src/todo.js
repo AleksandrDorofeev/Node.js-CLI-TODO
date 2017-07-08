@@ -1,8 +1,8 @@
 let R = require("ramda")
-let reсentDBFile = "./todo.json"
-let archiveDBFile = "./archive.json"
 let FS = require("fs-extra")
 let D = require("date-fns")
+let reсentDBFile = "./todo.json"
+let archiveDBFile = "./archive.json"
 
 //commands
 
