@@ -92,14 +92,4 @@ $ node todo.js archive
    }
 ]
   ```
-  
-### archive.json
-  
-```json
-[
-   {
-    "text": "Go for a walk with the ferret",
-    "done": true
-   }
-]
-   ```
+
