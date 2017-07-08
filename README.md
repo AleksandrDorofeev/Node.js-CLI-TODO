@@ -40,6 +40,16 @@ $ node todo.js done 1
 [ ] 2. Go for a walk with the ferret
 [ ] 3. Time to finish picture
 ```
+### Not completed a task
+
+Use `undone {id}` command.
+
+```
+$ node todo.js undone 1
+[ ] 1. Buy more juice
+[ ] 2. Go for a walk with the ferret
+[ ] 3. Time to finish picture
+```
 
 ### Delete a task
 
