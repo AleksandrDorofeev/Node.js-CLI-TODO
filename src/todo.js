@@ -2,6 +2,7 @@ let R = require("ramda")
 let reсentDBFile = "./todo.json"
 let archiveDBFile = "./archive.json"
 let FS = require("fs-extra")
+let D = require("date-fns")
 
 //commands
 
@@ -30,46 +31,53 @@ let logLineArchive = (todo, i) => {
 }
 let logArchive = forEachI(logLineArchive)
 
-let loadReсent = () => require(recentDBFile)
-let saveReсent = (todos) => {writeFileX(recentDBFile, todos); logAll(todos) }
+let loadReсent = () => require(reсentDBFile)
+let saveReсent = (todos) => {writeFileX(reсentDBFile, todos); logRecent(todos) }
 let loadArchive = () => require(archiveDBFile)
-let saveArchive = (todos) => {writeFileArchive(archiveDBFile, todos); logArchive(todos) }
+let saveArchive = (todos) => {writeFileX(archiveDBFile, todos); logArchive(todos) }
 
 commands.init = function () {
-  writeFileX(recentDBFile, [])
+  writeFileX(reсentDBFile, [])
   writeFileX(archiveDBFile, [])
   console.log("Ready to work!")
 }
 
 commands.list = function () {
-  let recentTodos = loadRecent()
-  logAll(recentTodos)
+  let recentTodos = loadReсent()
+  logRecent(recentTodos)
 }
 
 commands.add = function (text) {
-  let recentTodos = loadRecent()
-  let recentTodos2 = R.append({text, "done": false}, recentTodos)
-  save(recentTodos2)
+  let recentTodos = loadReсent()
+  let recentDate = D.format(new Date(), "DD.MM HH:mm")
+  let recentTodos2 = R.append({text, "done": false, "createdAt": recentDate}, recentTodos)
+  saveReсent(recentTodos2)
 }
 
 commands.delete = function (index) {
-  let recentTodos = loadRecent()
+  let recentTodos = loadReсent()
   let recentTodos2 = R.remove(index, 1, recentTodos)
-  save(recentTodos2)
+  saveReсent(recentTodos2)
 }
 
 commands.done = function (index) {
-  let recentTodos = loadRecent()
+  let recentTodos = loadReсent()
   let recentTodos2 = R.update(index, R.assoc("done", true, recentTodos[index]), recentTodos)
-  save(recentTodos2)
+  saveReсent(recentTodos2)
+}
+
+commands.undone = function (index) {
+  let recentTodos = loadReсent()
+  let recentTodos2 = R.update(index, R.assoc("done", false, recentTodos[index]), recentTodos)
+  saveReсent(recentTodos2)
 }
 
 commands.archive = function () {
-  let recentTodos = loadRecent()
+  let recentTodos = loadReсent()
   let archiveTodos = loadArchive()
   let recentTodos2 = R.reject(R.prop("done"), recentTodos)
   let archiveTodos2 = R.concat(R.filter(R.prop("done"), recentTodos), archiveTodos)
-  saveRecent(recentTodos2)
+  saveReсent(recentTodos2)
   saveArchive(archiveTodos2)
 }
 
@@ -91,6 +99,9 @@ switch (operation) {
   case "done":
     let doneIndex = Number(process.argv[3]) - 1
     return commands.done(doneIndex)
+  case "undone":
+    let undoneIndex = Number(process.argv[3]) - 1
+    return commands.undone(undoneIndex)
   case "archive":
     return commands.archive()
   default:
