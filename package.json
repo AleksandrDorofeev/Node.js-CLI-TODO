@@ -1,0 +1,25 @@
+{
+  "name": "todoapp",
+  "version": "1.0.0",
+  "description": "todo",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node src/todo.js init",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexandrDorofeev/Node.js-CLI-TODO.git"
+  },
+  "author": "Alexandr Dorofeev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexandrDorofeev/Node.js-CLI-TODO/issues"
+  },
+  "homepage": "https://github.com/AlexandrDorofeev/Node.js-CLI-TODO#readme",
+  "dependencies": {
+    "date-fns": "^1.28.5",
+    "fs-extra": "^3.0.1",
+    "ramda": "^0.24.1"
+  }
+}
