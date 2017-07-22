@@ -1,88 +1,117 @@
 let R = require("ramda")
+let P = require("path")
 let FS = require("fs-extra")
 let D = require("date-fns")
-let reсentDBFile = "./todo.json"
-let archiveDBFile = "./archive.json"
-
-//commands
 
 let forEachI = R.addIndex(R.forEach)
 
-let commands = {}
+// Data --------------------------------------------------------------------------------------------
+let recentDBFile = P.resolve("./todo.json")
+let archiveDBFile = P.resolve("./archive.json")
 
-let writeFileX = R.curry((dbFile, todo) => {
+// Helpers -----------------------------------------------------------------------------------------
+let readFileX = function (file) {
+  if (P.extname(file) == ".json") {
+    return JSON.parse(FS.readFileSync(file, "utf-8"))
+  } else {
+    return FS.readFileSync(file, "utf-8")
+  }
+}
+
+let writeFileX = function (file, todo) {
   let str = typeof todo == "string" ? todo : JSON.stringify(todo, null, 2)
-  FS.outputFileSync(dbFile, str, "utf-8")
-})
+  FS.outputFileSync(file, str, "utf-8")
+}
 
-let logLine = (todo, i) => {
+let logLine = function (todo, i) {
   console.log(
     todo.done == false ? `[ ] ${i + 1}. ${todo.text}` :
     todo.done == true  ? `[x] ${i + 1}. ${todo.text}` :
                               `` // ignore archived todos
   )
 }
-let logRecent = forEachI(logLine)
 
-let logLineArchive = (todo, i) => {
+let logLineArchive = function (todo, i) {
   console.log(
     todo.done == true ? `[#] ${i + 1}. ${todo.text}` : ``
   )
 }
-let logArchive = forEachI(logLineArchive)
 
-let loadReсent = () => require(reсentDBFile)
-let saveReсent = (todos) => {writeFileX(reсentDBFile, todos); logRecent(todos) }
-let loadArchive = () => require(archiveDBFile)
-let saveArchive = (todos) => {writeFileX(archiveDBFile, todos); logArchive(todos) }
+let logRecent = function (todos) {
+  if (todos.length) {
+    forEachI(logLine, todos)
+  } else {
+    console.log("No recent todos")
+  }
+}
+
+let logArchive = function (todos) {
+  if (todos.length) {
+    forEachI(logLineArchive, todos)
+  } else {
+    console.log("No archive todos")
+  }
+}
+
+// Commands ----------------------------------------------------------------------------------------
+let commands = {}
 
 commands.init = function () {
-  writeFileX(reсentDBFile, [])
+  writeFileX(recentDBFile, [])
   writeFileX(archiveDBFile, [])
   console.log("Ready to work!")
 }
 
 commands.list = function () {
-  let recentTodos = loadReсent()
-  logRecent(recentTodos)
+  let todos = readFileX(recentDBFile)
+  logRecent(todos)
+}
+
+commands.listArchive = function () {
+  let todos = readFileX(archiveDBFile)
+  logArchive(todos)
 }
 
 commands.add = function (text) {
-  let recentTodos = loadReсent()
-  let recentDate = D.format(new Date(), "DD.MM HH:mm")
-  let recentTodos2 = R.append({text, "done": false, "createdAt": recentDate}, recentTodos)
-  saveReсent(recentTodos2)
+  let recentTodos = readFileX(recentDBFile)
+  let todo = {text, done: false, createdAt: new Date().toISOString()}
+  let recentTodos2 = R.append(todo, recentTodos)
+  writeFileX(recentDBFile, recentTodos2)
+  logRecent(recentTodos2)
 }
 
 commands.delete = function (index) {
-  let recentTodos = loadReсent()
+  let recentTodos = readFileX(recentDBFile)
   let recentTodos2 = R.remove(index, 1, recentTodos)
-  saveReсent(recentTodos2)
+  writeFileX(recentDBFile, recentTodos2)
+  logRecent(recentTodos2)
 }
 
 commands.done = function (index) {
-  let recentTodos = loadReсent()
+  let recentTodos = readFileX(recentDBFile)
   let recentTodos2 = R.update(index, R.assoc("done", true, recentTodos[index]), recentTodos)
-  saveReсent(recentTodos2)
+  writeFileX(recentDBFile, recentTodos2)
+  logRecent(recentTodos2)
 }
 
 commands.undone = function (index) {
-  let recentTodos = loadReсent()
+  let recentTodos = readFileX(recentDBFile)
   let recentTodos2 = R.update(index, R.assoc("done", false, recentTodos[index]), recentTodos)
-  saveReсent(recentTodos2)
+  writeFileX(recentDBFile, recentTodos2)
+  logRecent(recentTodos2)
 }
 
 commands.archive = function () {
-  let recentTodos = loadReсent()
-  let archiveTodos = loadArchive()
+  let recentTodos = readFileX(recentDBFile)
+  let archiveTodos = readFileX(archiveDBFile)
   let recentTodos2 = R.reject(R.prop("done"), recentTodos)
   let archiveTodos2 = R.concat(R.filter(R.prop("done"), recentTodos), archiveTodos)
-  saveReсent(recentTodos2)
-  saveArchive(archiveTodos2)
+  writeFileX(recentDBFile, recentTodos2)
+  logRecent(recentTodos2)
+  writeFileX(archiveDBFile, todos)
 }
 
-//command manager
-
+// Command Manager ---------------------------------------------------------------------------------
 let operation = process.argv[2]
 
 switch (operation) {
@@ -93,6 +122,8 @@ switch (operation) {
     return commands.add(text)
   case "list":
     return commands.list()
+  case "listArchive":
+    return commands.listArchive()
   case "delete":
     let deleteIndex = Number(process.argv[3]) - 1
     return commands.delete(deleteIndex)
